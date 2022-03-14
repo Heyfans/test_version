@@ -13,14 +13,14 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-board:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-board:2
     networks:
     - evolute-network
     volumes:
@@ -37,14 +37,14 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-board:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-board:2
     networks:
     - evolute-network
     volumes:
@@ -61,14 +61,14 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-wiki:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-wiki:2
     networks:
     - evolute-network
     volumes:
@@ -83,22 +83,22 @@ services:
     depends_on:
     - evolute-wiki
     environment:
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-wiki:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-wiki:2
     networks:
     - evolute-network
     volumes:
     - ./docker/qawiki/volume/logs:/usr/share/qawiki/logs
     - ./docker/evolute-studio/volume/media:/usr/share/qawiki/media
-  youdao_db:
+  db:
     command: mysqld --user=mysql --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
       --init-connect='SET NAMES utf8mb4;' --innodb-flush-log-at-trx-commit=0
-    container_name: youdao_db
+    container_name: db
     environment:
       MYSQL_ALLOW_EMPTY_PASSWORD: 'true'
       MYSQL_PASSWORD: mysql
@@ -144,13 +144,14 @@ services:
     - ./jvm.options.d:/usr/share/elasticsearch/config/jvm.options.d
   evolute:
     container_name: evolute
-    command: 'bash -c "./wait-for youdao_db:3306 -t 500 -- python manage.py migrate --database managements && python manage.py migrate && python manage.py runserver 0:8000"
+    command: 'bash -c "./wait-for db:3306 -t 500 -- python manage.py migrate --database managements
+      && python manage.py migrate && python manage.py runserver 0:8000"
 
       '
     depends_on:
-    - youdao_db
+    - db
     environment:
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_ROOT_PASSWORD: ''
@@ -159,7 +160,8 @@ services:
       REDIS_PORT: 6379
       LOGIN_URL: LOGIN_URL
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-deploy:openid
+      WS_DOMAIN: WS_DOMAIN
+    image: ncr-partner.nie.netease.com/evolute/evolute-deploy:2
     networks:
     - evolute-network
     volumes:
@@ -177,14 +179,14 @@ services:
       SERVER_WORKER: '3'
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-board:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-board:2
     networks:
     - evolute-network
     ports:
@@ -203,14 +205,14 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
       REDIS_HOST: redis
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-studio:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-studio:2
     networks:
     - evolute-network
     ports:
@@ -230,7 +232,7 @@ services:
       SERVER_WORKER: '3'
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
@@ -238,7 +240,7 @@ services:
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
       WS_DOMAIN: WS_DOMAIN
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-wiki:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-wiki:2
     networks:
     - evolute-network
     ports:
@@ -257,7 +259,7 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
@@ -265,7 +267,7 @@ services:
       REDIS_PORT: 6379
       SUFFIX: SUFFIX
       WS_DOMAIN: WS_DOMAIN
-    image: ncr-partner.nie.netease.com/evolute-youdao/evolute-wiki:youdao
+    image: ncr-partner.nie.netease.com/evolute/evolute-wiki:2
     networks:
     - evolute-network
     tty: true
@@ -279,9 +281,9 @@ services:
     image: redis:latest
     networks:
     - evolute-network
-  canal_youdao:
+  canal_server:
     working_dir: /home/canal-deployer/
-    container_name: canal_youdao
+    container_name: canal_server
     command: bash -c "./wait-for -t 400 evolute-wiki-ws:8000 -- ./bin/restart.sh && sleep 5s && python3 /home/canal-deployer/bin/canal-python.py"
     image: ncr-partner.nie.netease.com/evolute/canal:centos7.2
     networks:
@@ -289,12 +291,10 @@ services:
     environment:
       ES_HOST: evolute_es01
       ES_PORT: 9200
-      MYSQL_HOST: youdao_db
+      MYSQL_HOST: db
       MYSQL_PASSWORD: mysql
       MYSQL_PORT: 3306
       MYSQL_USER: mysql
-      DB_PREFIX: 'youdao'
-      SERVICE_SPLIT: 'evolute_wiki_'
       REDIS_HOST: redis
       REDIS_PORT: 6379
     ports:
@@ -303,11 +303,14 @@ services:
       - ./docker/canal-deployer/logs:/home/canal-deployer/logs
       - ./instance.properties:/home/canal-deployer/conf/example/instance.properties
     depends_on:
-      - youdao_db
+      - db
     stdin_open: true
     tty: true
-
 version: '2.1'
 volumes:
   data01:
+    driver: local
+  data02:
+    driver: local
+  data03:
     driver: local
